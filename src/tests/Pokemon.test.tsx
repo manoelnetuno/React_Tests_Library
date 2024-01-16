@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import App from '../App';
 import renderWithRouter from '../renderWithRouter';
 
-const Pika = '/pokemon/25';
+const PikaRouter = '/pokemon/25';
 describe('testando o pokemon ', () => {
   test('Verifica se é renderizado um card com as informações de determinado Pokémon:', () => {
     renderWithRouter(<App />);
@@ -23,14 +23,24 @@ describe('testando o pokemon ', () => {
 
     const PikaDet = screen.getByText(/Pikachu Details/i);
     expect(PikaDet).toBeInTheDocument();
-    expect(window.location.pathname).toBe(Pika);
+    expect(window.location.pathname).toBe(PikaRouter);
   });
   test('Verifica se o card com nome e tipo corretos do Pokémon deve aparecer na tela', () => {
-    renderWithRouter(<App />, { route: Pika });
+    renderWithRouter(<App />, { route: PikaRouter });
 
     const Name = screen.getByTestId('pokemon-name');
     const Type = screen.getByTestId('pokemon-type');
     expect(Name.innerHTML).toBe('Pikachu');
     expect(Type.innerHTML).toBe('Electric');
+  });
+  test('Os Pokémons favoritados tem um ícone de estrela', async () => {
+    renderWithRouter(<App />, { route: PikaRouter });
+
+    await userEvent.click(screen.getByRole('checkbox'));
+
+    const favImg = screen.getByAltText(/Pikachu is marked as favorite/i);
+    const srcPokeImg = '/star-icon.png';
+    expect(favImg).toBeInTheDocument();
+    expect(favImg).toHaveAttribute('src', srcPokeImg);
   });
 });
